@@ -68,13 +68,13 @@ airflowHome: /opt/airflow
 defaultAirflowRepository: apache/airflow
 
 # Default airflow tag to deploy
-defaultAirflowTag: "3.0.2"
+defaultAirflowTag: "3.1.0"
 
 # Default airflow digest. If specified, it takes precedence over tag
 defaultAirflowDigest: ~
 
 # Airflow version (Used to make some decisions based on Airflow Version being deployed)
-airflowVersion: "3.0.2"
+airflowVersion: "3.1.0"
 
 # Images
 images:
@@ -83,7 +83,7 @@ images:
     tag: latest
     # Specifying digest takes precedence over tag.
     digest: ~
-    pullPolicy: Never
+    pullPolicy: IfNotPresent
   # To avoid images with user code, you can turn this to 'true' and
   # all the 'run-airflow-migrations' and 'wait-for-airflow-migrations' containers/jobs
   # will use the images from 'defaultAirflowRepository:defaultAirflowTag' values
@@ -392,10 +392,10 @@ volumes: []
 volumeMounts: []
 
 # Secrets for all airflow containers
-secret: []
-# - envName: ""
-#   secretName: ""
-#   secretKey: ""
+secret: 
+  - envName: "AIRFLOW__API__SECRET_KEY"
+    secretName: "airflow-api-secret"
+    secretKey: "api-secret-key"
 
 # Enables selected built-in secrets that are set via environment variables by default.
 # Those secrets are provided by the Helm Chart secrets by default but in some cases you
@@ -2959,8 +2959,8 @@ dags:
     # git repo clone url
     # ssh example: git@github.com:apache/airflow.git
     # https example: https://github.com/apache/airflow.git
-    repo: https://github.com/PacktPublishing/Bigdata-on-Kubernetes.git
-    branch: main
+    repo: https://github.com/karuniaperjuangan/airflow-k8s-titanic.git
+    branch: master
     rev: HEAD
     # The git revision (branch, tag, or hash) to check out, v4 only
     # ref: v2-2-stable
@@ -2969,7 +2969,7 @@ dags:
     maxFailures: 0
     # subpath within the repo where dags are located
     # should be "" if dags are at repo root
-    subPath: "Chapter08/airflow/dags"
+    subPath: "dags"
     # if your repo needs a user name password
     # you can load them to a k8s secret like the one below
     #   ---
