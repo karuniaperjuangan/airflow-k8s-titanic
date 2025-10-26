@@ -1,6 +1,7 @@
 from airflow.providers.standard.operators.empty import EmptyOperator
 from airflow.sdk import dag, task
 from airflow.providers.standard.operators.bash import BashOperator
+from airflow.providers.cncf.kubernetes.operators.pod import KubernetesPodOperator
 from datetime import datetime
 import pandas as pd
 
@@ -24,6 +25,12 @@ def titanic_processing():
     @task
     def first_task():
         print("And so, it begins!")
+
+    hello_kubernetes = KubernetesPodOperator(
+        task_id="hello_kubernetes",
+        image="python:3.12",
+        cmds=["python","-c",'print("Hello world")']
+    )
 
     @task
     def read_data():
@@ -53,6 +60,7 @@ def titanic_processing():
     # Orchestration
     first = first_task()
     downloaded = read_data()
+    hello_kubernetes >> first
     start >> first >> downloaded
     surv_count = print_survivors(downloaded)
     surv_sex = survivors_sex(downloaded)
